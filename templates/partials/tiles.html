@@ -1,0 +1,9 @@
+<div class="tiles">
+  {% for t in tiles %}
+  <div class="tile">
+    <div class="tile-label">{{ t.label }}</div>
+    <div class="tile-value">{{ t.value }}</div>
+    {% if t.sub %}<div class="tile-sub" title="{{ t.sub }}">{{ t.sub }}</div>{% endif %}
+  </div>
+  {% endfor %}
+</div>

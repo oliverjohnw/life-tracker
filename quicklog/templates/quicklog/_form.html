@@ -1,0 +1,32 @@
+{% load ui %}<form class="qform" method="post" action="{{ spec.form_url }}" enctype="multipart/form-data" data-qform novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="form-errors">{% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}</div>{% endif %}
+
+  {% for row in form.essential %}{% include "quicklog/_row.html" %}{% endfor %}
+
+  {% if kind == "concert" %}
+  <div class="acts">
+    <div class="acts-head">
+      <span class="sect-title">Also on the bill</span>
+      <button type="button" class="link-btn" data-add-act>+ Add an act</button>
+    </div>
+    <p class="acts-hint">Openers, or the other acts if it was a festival.</p>
+    {{ form.acts.management_form }}
+    <div data-acts>{% for f in form.acts %}{% include "quicklog/_act.html" %}{% endfor %}</div>
+    <template data-act-template>{% include "quicklog/_act.html" with f=form.acts.empty_form %}</template>
+  </div>
+  {% endif %}
+
+  {% if form.more %}
+  <details class="more"{% if form.more_has_errors %} open{% endif %}>
+    <summary>More details <small>optional</small></summary>
+    <div class="more-body">{% for row in form.more %}{% include "quicklog/_row.html" %}{% endfor %}</div>
+  </details>
+  {% endif %}
+
+  {% if form.has_location %}{{ form.location_map|json_script }}{% endif %}
+
+  <div class="form-foot">
+    <button class="btn" type="submit" data-submit>{% icon "check" 17 %} Save</button>
+  </div>
+</form>

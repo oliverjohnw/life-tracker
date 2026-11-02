@@ -1,0 +1,46 @@
+/* Bring the Django admin in line with the dashboard palette. */
+:root, html[data-theme="dark"], html[data-theme="light"] {
+  --primary: #14171f;
+  --secondary: #ff4f9a;
+  --accent: #ff4f9a;
+  --primary-fg: #eceef4;
+  --body-bg: #0a0c11;
+  --body-fg: #eceef4;
+  --body-quiet-color: #8b93a7;
+  --header-bg: #12151c;
+  --header-color: #eceef4;
+  --header-branding-color: #eceef4;
+  --header-link-color: #c5cad6;
+  --breadcrumbs-bg: #171b25;
+  --breadcrumbs-fg: #c5cad6;
+  --breadcrumbs-link-fg: #ff4f9a;
+  --link-fg: #ff7ab4;
+  --link-hover-color: #ffa5cf;
+  --link-selected-fg: #ff4f9a;
+  --hairline-color: #232836;
+  --border-color: #2a3040;
+  --darkened-bg: #12151c;
+  --selected-bg: #1d2230;
+  --selected-row: #2a2130;
+  --button-bg: #ff4f9a;
+  --button-fg: #0a0c11;
+  --button-hover-bg: #ff6aac;
+  --default-button-bg: #ff4f9a;
+  --default-button-hover-bg: #ff6aac;
+  --object-tools-bg: #232836;
+  --object-tools-hover-bg: #2f3648;
+  --module-bg: #12151c;
+  --module-header-bg: #171b25;
+  --module-header-color: #eceef4;
+  --module-fg: #eceef4;
+}
+body { font-family: "Inter", system-ui, sans-serif; }
+#header { border-bottom: 1px solid #232836; }
+#site-name a { font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; letter-spacing: -0.02em; font-size: 20px; }
+#site-name small { font-family: "Inter", sans-serif; font-weight: 500; font-size: 12px; color: #8b93a7; letter-spacing: 0; }
+.back-to-site { color: #ff7ab4; margin-right: 12px; font-weight: 600; }
+.module h2, .module caption, .inline-group h2 { background: #171b25; color: #eceef4; }
+.button, input[type=submit], input[type=button], .submit-row input, a.button { background: #ff4f9a; color: #0a0c11; font-weight: 600; border-radius: 10px; }
+.button:hover, input[type=submit]:hover { background: #ff6aac; }
+.submit-row a.deletelink { background: #ef5b5b; color: #fff; }
+input[type=text], input[type=number], input[type=url], input[type=date], input[type=password], textarea, select { border-radius: 8px; }

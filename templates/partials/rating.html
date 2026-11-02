@@ -1,0 +1,1 @@
+{% load ui %}{% if value is not None and value != "" %}<span class="rating {{ size }}" data-tier="{{ value|rating_tier }}" title="Rating">{{ value|score }}</span>{% endif %}

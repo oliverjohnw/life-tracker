@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}Home — Life Dashboard{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Your life, <em>logged.</em></h1>
+  <p>
+    {{ total }} memories across {{ categories|length }} trackers{% if latest %} — most recently
+    <b style="color: var(--ink-2);">{{ latest.title }}</b> on {{ latest.date|date:"M j" }}{% endif %}.
+  </p>
+</section>
+
+<section class="cat-grid">
+  {% for c in cards %}
+  <a class="cat-card" href="{% url c.cat.url_name %}" style="--c: {{ c.cat.color }}; --c-rgb: {{ c.cat.rgb }}">
+    <span class="icon-big">{% icon c.cat.icon 22 %}</span>
+    <span class="label">{{ c.cat.label }}</span>
+    <span class="count">{{ c.count }}</span>
+    <span class="line">{{ c.line }}</span>
+    {% if c.this_year %}<span class="badge-year">{{ c.this_year }} in {{ c.year }}</span>{% endif %}
+  </a>
+  {% endfor %}
+</section>
+
+<section class="panel-card" style="margin-bottom: 16px;">
+  <div class="panel-head">
+    <div>
+      <h3>{% if selected_year %}{{ selected_year }}{% else %}The last 12 months{% endif %}</h3>
+      <div style="color: var(--muted); font-size: 13px;">{{ window_count }} things on {{ active_days }} different days</div>
+    </div>
+    <div class="year-pills">
+      <a href="{% url 'home' %}" class="{% if not selected_year %}is-active{% endif %}">12 months</a>
+      {% for y in years %}<a href="?year={{ y }}" class="{% if y == selected_year %}is-active{% endif %}">{{ y }}</a>{% endfor %}
+    </div>
+  </div>
+  <div class="cal-scroll">
+    <div class="cal" style="--cols: {{ calendar.columns }}">
+      <div class="cal-months">
+        {% for m in calendar.months %}<span style="grid-column: {{ m.col }}">{{ m.label }}</span>{% endfor %}
+      </div>
+      <div class="cal-grid">
+        {% for cell in calendar.cells %}{% if cell.pad %}<span class="cal-cell pad"></span>{% else %}<span class="cal-cell{% if cell.on %} on{% endif %}{% if cell.today %} today{% endif %}" style="{{ cell.style }}" title="{{ cell.title }}"></span>{% endif %}{% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="legend">
+    {% for c in categories %}<span style="--c: {{ c.color }}"><i></i>{{ c.label }}</span>{% endfor %}
+    <span style="margin-left: auto;">Split squares = more than one thing that day</span>
+  </div>
+</section>
+
+<section class="home-split">
+  <div class="panel-card">
+    <div class="panel-head"><h3>Recent activity</h3></div>
+    <div class="feed">
+      {% for item in feed %}
+      <a class="feed-item" href="{{ item.url }}" style="--c: {{ item.color }}">
+        <span class="feed-dot">{% icon item.icon 17 %}</span>
+        <span class="feed-main"><span class="feed-title" style="display:block">{{ item.title }}</span><span class="feed-sub" style="display:block">{{ item.sub }}</span></span>
+        <span class="feed-date">{{ item.date|date:"M j" }}</span>
+      </a>
+      {% empty %}
+      <p style="color: var(--muted); margin: 0;">Nothing logged yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="panel-card">
+    <div class="panel-head"><h3>Log something new</h3></div>
+    <p style="color: var(--muted); margin: -6px 0 16px; font-size: 13.5px;">Pick one — a quick form slides out, a few seconds from your phone.</p>
+    <div class="quick">
+      {% for c in cards %}
+      <a href="{{ c.add_url }}" style="--c: {{ c.cat.color }}; --c-rgb: {{ c.cat.rgb }}">{% icon "plus" 15 %} {{ c.cat.label }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

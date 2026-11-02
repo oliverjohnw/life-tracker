@@ -1,0 +1,23 @@
+[project]
+name = "life-dashboard"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "John Oliver", email = "johnoliver616@yahoo.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "dj-database-url>=3.1.2",
+    "django>=5.2,<5.3",
+    "django-environ>=0.14.0",
+    "google-api-python-client>=2.199.0",
+    "google-auth>=2.56.3",
+    "gunicorn>=26.2.0",
+    "pillow>=13.0.0",
+    "plotly>=6.9.0",
+    "psycopg2-binary>=2.9.12",
+    "whitenoise>=6.12.0",
+]
+
+[tool.uv]
+package = false

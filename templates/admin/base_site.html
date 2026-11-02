@@ -1,0 +1,7 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/admin.css' %}">{% endblock %}
+{% block branding %}
+<div id="site-name"><a href="{% url 'admin:index' %}">Life Dashboard <small>· log &amp; manage</small></a></div>
+{% endblock %}
+{% block nav-global %}<a class="back-to-site" href="{% url 'home' %}">← Back to the dashboard</a>{% endblock %}

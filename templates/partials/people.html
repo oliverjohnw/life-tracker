@@ -1,0 +1,5 @@
+{% load ui %}<div class="people">
+  {% for p in people %}
+  <span class="person"><span class="avatar" style="--h: {{ p.name|hue }}">{{ p.name|initials }}</span>{{ p.name }}</span>
+  {% endfor %}
+</div>

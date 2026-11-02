@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}Log something — Life Dashboard{% endblock %}
+
+{% block content %}
+<header class="page-head">
+  <div class="page-badge">{% icon "plus" 28 %}</div>
+  <div>
+    <h1>Log something</h1>
+    <p>Pick what you're adding — the right fields appear.</p>
+  </div>
+</header>
+
+<div class="log-page">
+  {% if success %}
+  <div class="log-success">
+    <span class="log-check">{% icon "check" 26 %}</span>
+    <h3>Logged!</h3>
+    <p>{{ success.message }}</p>
+    <div class="log-success-actions">
+      <a class="btn" href="{% url 'quicklog:form' success.kind %}">Log another</a>
+      <a class="btn btn-ghost" href="{{ success.view_url }}">View in {{ success.tracker }}</a>
+    </div>
+  </div>
+  {% endif %}
+  {% include "quicklog/_panel.html" with panel_id="page" %}
+</div>
+{% endblock %}

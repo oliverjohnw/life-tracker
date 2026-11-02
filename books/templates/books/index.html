@@ -1,0 +1,82 @@
+{% extends "layouts/tracker.html" %}
+{% load ui %}
+
+{% block panel_log %}
+<div data-filter-scope>
+  {% include "partials/toolbar.html" with placeholder="Search title, author, genre…" filter_key="status" filter_label="Any status" filter_options=status_options total=books|length %}
+
+  <div class="shelf" data-list>
+  {% for b in books %}
+    <button type="button" class="book" data-item data-open="book-{{ b.pk }}"
+            data-search="{{ b.search_blob }}" data-year="{{ b.year }}" data-status="{{ b.status }}"
+            data-date="{{ b.activity_date|date:'Y-m-d' }}" data-rating="{{ b.rating|default_if_none:'' }}">
+      <div class="book-cover" style="--h: {{ b.title|hue }}">
+        {% if b.cover_image %}<img src="{{ b.cover_image.url }}" alt="" loading="lazy">{% endif %}
+        {% if b.rating is not None %}<span class="book-rate">{% include "partials/rating.html" with value=b.rating size="sm" %}</span>{% endif %}
+        {% if not b.cover_image %}<span class="ct">{{ b.title }}</span>{% endif %}
+      </div>
+      <div class="book-meta">
+        {% if b.cover_image %}<b>{{ b.title }}</b>{% endif %}
+        {{ b.author }}{% if b.status != "finished" %} · <span style="color: var(--accent);">{{ b.get_status_display }}</span>{% endif %}
+      </div>
+    </button>
+  {% endfor %}
+  </div>
+  <div class="empty" data-empty hidden><h3>No matches</h3><p>No books fit those filters.</p></div>
+</div>
+
+{% for b in books %}
+<dialog class="sheet" id="book-{{ b.pk }}">
+  <button type="button" class="btn btn-ghost btn-sm sheet-close" data-close>Close</button>
+  <div class="sheet-in">
+    <div class="sheet-head">
+      <div class="book-cover" style="--h: {{ b.title|hue }}">
+        {% if b.cover_image %}<img src="{{ b.cover_image.url }}" alt="">{% else %}<span class="ct" style="font-size: 13px;">{{ b.title|truncatechars:40 }}</span>{% endif %}
+      </div>
+      <div style="min-width: 0;">
+        <h2 style="font-size: 26px; line-height: 1.15;">{{ b.title }}</h2>
+        <p style="color: var(--muted); margin: 4px 0 12px;">by {{ b.author }}{% if b.series %} · {{ b.series }}{% endif %}</p>
+        <div class="entry-chips" style="margin: 0 0 12px;">
+          <span class="chip accent">{{ b.get_status_display }}</span>
+          <span class="chip">{{ b.get_category_display }}</span>
+          {% if b.genre %}<span class="chip">{{ b.genre }}</span>{% endif %}
+          {% if b.re_read %}<span class="chip">↻ re-read</span>{% endif %}
+        </div>
+        {% include "partials/rating.html" with value=b.rating %}
+      </div>
+    </div>
+    <dl class="facts">
+      <div><dt>Format</dt><dd>{{ b.get_format_display }}</dd></div>
+      {% if b.pages %}<div><dt>Pages</dt><dd>{{ b.pages }}</dd></div>{% endif %}
+      {% if b.date_started %}<div><dt>Started</dt><dd>{{ b.date_started|date:"M j, Y" }}</dd></div>{% endif %}
+      {% if b.date_finished %}<div><dt>Finished</dt><dd>{{ b.date_finished|date:"M j, Y" }}</dd></div>{% endif %}
+      {% if b.days_to_finish %}<div><dt>Took</dt><dd>{{ b.days_to_finish }} day{{ b.days_to_finish|pluralize }}</dd></div>{% endif %}
+      {% if b.recommended_by %}<div><dt>Recommended by</dt><dd>{{ b.recommended_by }}</dd></div>{% endif %}
+    </dl>
+    {% if b.notes %}<div><h4 class="sect-title">Thoughts</h4><p class="prose">{{ b.notes }}</p></div>{% endif %}
+    {% if b.quotes %}<div><h4 class="sect-title">Passages</h4><blockquote class="quote">{{ b.quotes }}</blockquote></div>{% endif %}
+    <div><a class="btn btn-ghost btn-sm" href="{% url 'admin:books_book_change' b.pk %}">Edit in admin</a></div>
+  </div>
+</dialog>
+{% endfor %}
+{% endblock %}
+
+{% block panel_insights %}
+{% include "partials/charts.html" %}
+{% if top_rated %}
+<div class="split" style="grid-template-columns: 1fr;">
+  <div class="panel-card">
+    <h3>Best reads</h3>
+    <div class="rank">
+      {% for b in top_rated %}
+      <div class="rank-row">
+        <span class="rank-n">{{ forloop.counter }}</span>
+        <div class="rank-main"><b>{{ b.title }}</b><span>{{ b.author }}{% if b.date_finished %} · {{ b.date_finished|date:"M Y" }}{% endif %}</span></div>
+        {% include "partials/rating.html" with value=b.rating size="sm" %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

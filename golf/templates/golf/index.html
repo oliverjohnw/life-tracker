@@ -1,0 +1,81 @@
+{% extends "layouts/tracker.html" %}
+{% load ui %}
+
+{% block heading %}{{ game_label }}{% endblock %}
+{% block subtitle %}{% if game == "golf" %}Tee times, scorecards and the one good drive{% else %}Discs, baskets and questionable putts{% endif %}{% endblock %}
+
+{% block above_tabs %}
+<div class="tabbar">
+  <div class="seg" aria-label="Game">
+    {% for value, label in games %}
+    <a href="?game={{ value }}" class="{% if value == game %}is-active{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block panel_log %}
+<div data-filter-scope>
+  {% include "partials/toolbar.html" with placeholder="Search course, weather, who you played with…" filter_key="course" filter_label="Any course" filter_options=course_options total=rounds|length %}
+
+  <div data-list>
+  {% for r in rounds %}
+    <details class="entry" data-item
+             data-search="{{ r.search_blob }}" data-year="{{ r.year }}" data-course="{{ r.course_name }}"
+             data-date="{{ r.date|date:'Y-m-d' }}" data-rating="{{ r.rating|default_if_none:'' }}">
+      <summary>
+        <div class="entry-date">
+          <span class="m">{{ r.date|date:"M" }}</span>
+          <span class="d">{{ r.date|date:"j" }}</span>
+          <span class="y">{{ r.date|date:"Y" }}</span>
+        </div>
+        <div class="entry-lead">
+          <div class="thumb" style="--h: {{ r.course_name|hue }}; text-align: center; line-height: 1;">
+            <span>{{ r.score }}<small style="display: block; font-size: 11px; font-weight: 600; opacity: 0.85; margin-top: 3px;">{{ r.to_par|signed }}</small></span>
+          </div>
+          <div class="entry-main">
+            <div class="entry-title">{{ r.course_name }}{% if r.layout %}<small>{{ r.layout }}</small>{% endif %}</div>
+            <div class="entry-sub">
+              {% with people=r.played_with.all %}{% if people %}with {% for p in people %}<b>{{ p.name }}</b>{% if not forloop.last %}, {% endif %}{% endfor %}{% else %}Solo round{% endif %}{% endwith %}{% if r.weather %} · {{ r.weather }}{% endif %}
+            </div>
+            <div class="entry-chips">
+              <span class="chip accent">{{ r.holes }} holes</span>
+              {% if r.to_par is not None %}<span class="chip">{{ r.to_par|signed }} vs par {{ r.par }}</span>{% endif %}
+              {% if r.transport %}<span class="chip">{{ r.get_transport_display }}</span>{% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="entry-aside">
+          {% include "partials/rating.html" with value=r.rating %}
+          {% icon "chevron" 20 "chev" %}
+        </div>
+      </summary>
+
+      <div class="entry-body">
+        <div class="body-cols">
+          <div>
+            <h4 class="sect-title">The round</h4>
+            <dl class="facts">
+              <div><dt>Course</dt><dd>{{ r.course_name }}</dd></div>
+              {% if r.layout %}<div><dt>Layout / tees</dt><dd>{{ r.layout }}</dd></div>{% endif %}
+              <div><dt>Holes</dt><dd>{{ r.holes }}</dd></div>
+              <div><dt>Score</dt><dd>{{ r.score }}</dd></div>
+              {% if r.par %}<div><dt>Par</dt><dd>{{ r.par }}</dd></div>{% endif %}
+              {% if r.to_par is not None %}<div><dt>To par</dt><dd>{{ r.to_par|signed }}</dd></div>{% endif %}
+              {% if r.differential is not None %}<div><dt>Differential</dt><dd>{{ r.differential }}</dd></div>{% endif %}
+              {% if r.weather %}<div><dt>Conditions</dt><dd>{{ r.weather }}</dd></div>{% endif %}
+            </dl>
+          </div>
+          {% with people=r.played_with.all %}{% if people %}
+          <div><h4 class="sect-title">Played with</h4>{% include "partials/people.html" %}</div>
+          {% endif %}{% endwith %}
+          {% if r.notes %}<div class="span-all"><h4 class="sect-title">Notes</h4><p class="prose">{{ r.notes }}</p></div>{% endif %}
+        </div>
+        <div class="entry-actions"><a class="btn btn-ghost btn-sm" href="{% url 'admin:golf_round_change' r.pk %}">Edit in admin</a></div>
+      </div>
+    </details>
+  {% endfor %}
+  </div>
+  <div class="empty" data-empty hidden><h3>No matches</h3><p>No rounds fit those filters.</p></div>
+</div>
+{% endblock %}

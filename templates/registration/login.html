@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}Log in — Life Dashboard{% endblock %}
+{% block anon %}
+<div class="auth-wrap">
+  <form class="auth-card" method="post">
+    {% csrf_token %}
+    <div class="brand">
+      <span class="brand-mark">{% for c in categories %}<i style="--c: {{ c.color }}"></i>{% endfor %}</span>
+      <span class="brand-name">Life<br>Dashboard</span>
+    </div>
+    <h1>Welcome back</h1>
+    <p class="lead">Your life, logged.</p>
+    <label for="id_username">Username</label>
+    {{ form.username }}
+    <label for="id_password">Password</label>
+    {{ form.password }}
+    {% if form.errors %}<div class="auth-error">That username and password didn't match.</div>{% endif %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn" type="submit">Log in</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "layouts/tracker.html" %}
+{% load ui %}
+
+{% block panel_log %}
+<div data-filter-scope>
+  {% include "partials/toolbar.html" with placeholder="Search artist, venue, city, friend…" filter_key="type" filter_label="Any type" filter_options=type_options total=events|length %}
+
+  <div data-list>
+  {% for e in events %}
+    <details class="entry" data-item
+             data-search="{{ e.search_blob }}" data-year="{{ e.year }}" data-type="{{ e.event_type }}"
+             data-date="{{ e.date|date:'Y-m-d' }}" data-rating="{{ e.display_rating|default_if_none:'' }}">
+      <summary>
+        <div class="entry-date">
+          <span class="m">{{ e.date|date:"M" }}</span>
+          <span class="d">{{ e.date|date:"j" }}</span>
+          <span class="y">{{ e.date|date:"Y" }}</span>
+        </div>
+        <div class="entry-lead">
+          {% if e.poster_image %}
+            <img class="thumb" src="{{ e.poster_image.url }}" alt="Poster" loading="lazy">
+          {% else %}
+            <div class="thumb" style="--h: {{ e.title|hue }}">{{ e.title|initials }}</div>
+          {% endif %}
+          <div class="entry-main">
+            <div class="entry-title">{{ e.title }}</div>
+            <div class="entry-sub">
+              {% if e.featured_acts %}with {% for a in e.featured_acts %}<b>{{ a.artist }}</b>{% if not forloop.last %}, {% endif %}{% endfor %} · {% endif %}{{ e.location.name }}{% if e.location.city %}, {{ e.location.city }}{% endif %}{% if e.location.state %} {{ e.location.state }}{% endif %}
+            </div>
+            <div class="entry-chips">
+              <span class="chip accent">{{ e.get_event_type_display }}</span>
+              {% for g in e.genres|slice:":2" %}<span class="chip">{{ g }}</span>{% endfor %}
+              {% with n=e.attendees.all|length %}{% if n %}<span class="chip">{% icon "users" 12 %} {{ n }}</span>{% endif %}{% endwith %}
+              {% if e.poster_image %}<span class="chip">{% icon "image" 12 %} poster</span>{% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="entry-aside">
+          {% include "partials/rating.html" with value=e.display_rating %}
+          {% icon "chevron" 20 "chev" %}
+        </div>
+      </summary>
+
+      <div class="entry-body{% if e.poster_image %} has-media{% endif %}">
+        {% if e.poster_image %}
+          <a href="{{ e.poster_image.url }}" target="_blank" rel="noopener"><img class="poster-full" src="{{ e.poster_image.url }}" alt="Poster for {{ e.title }}" loading="lazy"></a>
+        {% endif %}
+        <div class="body-cols">
+          <div class="span-all">
+            <h4 class="sect-title">Lineup</h4>
+            <div class="lineup">
+              {% for a in e.lineup %}
+              <div class="act">
+                <span class="chip {% if a.role == 'headliner' %}accent{% endif %}">{{ a.get_role_display }}</span>
+                <span class="act-name">{{ a.artist }}{% if a.tour_name %}<span class="act-meta"> · {{ a.tour_name }}</span>{% endif %}</span>
+                {% if a.genre %}<span class="chip">{{ a.genre }}</span>{% endif %}
+                {% if a.set_length %}<span class="act-meta">{{ a.set_length|duration }}</span>{% endif %}
+                {% include "partials/rating.html" with value=a.rating size="sm" %}
+                {% if a.setlist_fm_url %}<a class="link" href="{{ a.setlist_fm_url }}" target="_blank" rel="noopener">setlist.fm {% icon "external" 13 %}</a>{% endif %}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div>
+            <h4 class="sect-title">The details</h4>
+            <dl class="facts">
+              <div><dt>Venue</dt><dd>{{ e.location.name }}</dd></div>
+              {% if e.location.setting %}<div><dt>Setting</dt><dd>{{ e.location.get_setting_display }}</dd></div>{% endif %}
+              {% if e.seats %}<div><dt>Seats</dt><dd>{{ e.seats }}</dd></div>{% endif %}
+              {% if e.price is not None %}<div><dt>Ticket</dt><dd>{{ e.price|money }}</dd></div>{% endif %}
+              {% if e.merch_spent %}<div><dt>Merch</dt><dd>{{ e.merch_spent|money }}</dd></div>{% endif %}
+              <div><dt>Poster</dt><dd>{% if e.poster_taken %}Got one{% else %}Nope{% endif %}</dd></div>
+            </dl>
+          </div>
+
+          {% if e.sound_quality is not None or e.view_quality is not None or e.crowd_rating is not None %}
+          <div>
+            <h4 class="sect-title">How it felt</h4>
+            <div class="meters">
+              {% if e.sound_quality is not None %}<div class="meter"><span>Sound</span><div class="bar"><i style="width: {{ e.sound_quality|meter }}%"></i></div><b>{{ e.sound_quality|score }}</b></div>{% endif %}
+              {% if e.view_quality is not None %}<div class="meter"><span>View</span><div class="bar"><i style="width: {{ e.view_quality|meter }}%"></i></div><b>{{ e.view_quality|score }}</b></div>{% endif %}
+              {% if e.crowd_rating is not None %}<div class="meter"><span>Crowd</span><div class="bar"><i style="width: {{ e.crowd_rating|meter }}%"></i></div><b>{{ e.crowd_rating|score }}</b></div>{% endif %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% with people=e.attendees.all %}{% if people %}
+          <div>
+            <h4 class="sect-title">Who came</h4>
+            {% include "partials/people.html" %}
+          </div>
+          {% endif %}{% endwith %}
+
+          {% for a in e.lineup %}{% if a.highlight_lines %}
+          <div>
+            <h4 class="sect-title">{{ a.artist }} — setlist highlights</h4>
+            <ul class="setlist">{% for line in a.highlight_lines %}<li>{{ line }}</li>{% endfor %}</ul>
+          </div>
+          {% endif %}{% endfor %}
+
+          {% if e.notes %}
+          <div class="span-all"><h4 class="sect-title">Notes</h4><p class="prose">{{ e.notes }}</p></div>
+          {% endif %}
+          {% if e.venue_notes %}
+          <div class="span-all callout"><b>Next time at {{ e.location.name }}</b>{{ e.venue_notes }}</div>
+          {% endif %}
+        </div>
+        <div class="entry-actions"><a class="btn btn-ghost btn-sm" href="{% url 'admin:concerts_event_change' e.pk %}">Edit in admin</a></div>
+      </div>
+    </details>
+  {% endfor %}
+  </div>
+  <div class="empty" data-empty hidden><h3>No matches</h3><p>Nothing in the logbook fits those filters.</p></div>
+</div>
+{% endblock %}
+
+{% block panel_insights %}
+{% include "partials/charts.html" %}
+<div class="split">
+  <div class="panel-card">
+    <h3>Best nights</h3>
+    <div class="rank">
+      {% for e in top_rated %}
+      <div class="rank-row">
+        <span class="rank-n">{{ forloop.counter }}</span>
+        <div class="rank-main"><b>{{ e.title }}</b><span>{{ e.date|date:"M j, Y" }} · {{ e.location.name }}</span></div>
+        {% include "partials/rating.html" with value=e.display_rating size="sm" %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="panel-card">
+    <h3>What the venues give you</h3>
+    <p class="chart-note" style="color: var(--muted); margin: -6px 0 16px; font-size: 13px;">Average across every show</p>
+    <div class="meters">
+      {% for label, value in averages %}
+      <div class="meter"><span>{{ label }}</span><div class="bar"><i style="width: {{ value|meter }}%"></i></div><b>{{ value|floatformat:1|default:"—" }}</b></div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

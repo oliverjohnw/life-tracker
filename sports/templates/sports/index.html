@@ -1,0 +1,84 @@
+{% extends "layouts/tracker.html" %}
+{% load ui %}
+
+{% block panel_log %}
+<div data-filter-scope>
+  {% include "partials/toolbar.html" with placeholder="Search team, league, venue, friend…" filter_key="league" filter_label="Any league" filter_options=league_options total=games|length %}
+
+  <div data-list>
+  {% for g in games %}
+    <details class="entry" data-item
+             data-search="{{ g.search_blob }}" data-year="{{ g.year }}" data-league="{{ g.league }}"
+             data-date="{{ g.date|date:'Y-m-d' }}" data-rating="{{ g.rating|default_if_none:'' }}">
+      <summary>
+        <div class="entry-date">
+          <span class="m">{{ g.date|date:"M" }}</span>
+          <span class="d">{{ g.date|date:"j" }}</span>
+          <span class="y">{{ g.date|date:"Y" }}</span>
+        </div>
+        <div class="entry-lead">
+          <div class="thumb" style="--h: {{ g.league|hue }}; font-size: 14px;">{{ g.league|first_word|slice:":5" }}</div>
+          <div class="entry-main">
+            <div class="entry-title">{{ g.matchup }}</div>
+            <div class="entry-sub">
+              {% if g.score %}<b>{{ g.score }}</b> · {% endif %}{{ g.location.name }}{% if g.location.city %}, {{ g.location.city }}{% endif %}{% if g.location.state %} {{ g.location.state }}{% endif %}
+            </div>
+            <div class="entry-chips">
+              <span class="chip accent">{{ g.league }}</span>
+              {% if g.game_type != "Regular Season" %}<span class="chip">{{ g.game_type }}</span>{% endif %}
+              {% if g.result == "W" %}<span class="chip win">✓ Win</span>{% elif g.result == "L" %}<span class="chip loss">✕ Loss</span>{% endif %}
+              {% with n=g.attendees.all|length %}{% if n %}<span class="chip">{% icon "users" 12 %} {{ n }}</span>{% endif %}{% endwith %}
+            </div>
+          </div>
+        </div>
+        <div class="entry-aside">
+          {% include "partials/rating.html" with value=g.rating %}
+          {% icon "chevron" 20 "chev" %}
+        </div>
+      </summary>
+
+      <div class="entry-body">
+        <div class="body-cols">
+          <div>
+            <h4 class="sect-title">The game</h4>
+            <dl class="facts">
+              <div><dt>League</dt><dd>{{ g.league }}</dd></div>
+              <div><dt>Type</dt><dd>{{ g.game_type }}</dd></div>
+              {% if g.winner %}<div><dt>Winner</dt><dd>{{ g.winner }}</dd></div>{% endif %}
+              {% if g.score %}<div><dt>Score</dt><dd>{{ g.score }}</dd></div>{% endif %}
+              {% if g.my_team %}<div><dt>I was rooting for</dt><dd>{{ g.my_team }}</dd></div>{% endif %}
+              <div><dt>Venue</dt><dd>{{ g.location.name }}</dd></div>
+              {% if g.seats %}<div><dt>Seats</dt><dd>{{ g.seats }}</dd></div>{% endif %}
+            </dl>
+          </div>
+          {% with people=g.attendees.all %}{% if people %}
+          <div><h4 class="sect-title">Who came</h4>{% include "partials/people.html" %}</div>
+          {% endif %}{% endwith %}
+          {% if g.notes %}<div class="span-all"><h4 class="sect-title">Notes</h4><p class="prose">{{ g.notes }}</p></div>{% endif %}
+        </div>
+        <div class="entry-actions"><a class="btn btn-ghost btn-sm" href="{% url 'admin:sports_sportingevent_change' g.pk %}">Edit in admin</a></div>
+      </div>
+    </details>
+  {% endfor %}
+  </div>
+  <div class="empty" data-empty hidden><h3>No matches</h3><p>No games fit those filters.</p></div>
+</div>
+{% endblock %}
+
+{% block panel_insights %}
+{% include "partials/charts.html" %}
+<div class="split" style="grid-template-columns: 1fr;">
+  <div class="panel-card">
+    <h3>Best games I've seen</h3>
+    <div class="rank">
+      {% for g in top_rated %}
+      <div class="rank-row">
+        <span class="rank-n">{{ forloop.counter }}</span>
+        <div class="rank-main"><b>{{ g.matchup }}</b><span>{{ g.league }} · {{ g.date|date:"M j, Y" }} · {{ g.location.name }}</span></div>
+        {% include "partials/rating.html" with value=g.rating size="sm" %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

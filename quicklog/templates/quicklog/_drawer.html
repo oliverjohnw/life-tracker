@@ -1,0 +1,8 @@
+{% load ui %}
+<dialog class="drawer" id="log-drawer" aria-label="Log something">
+  <div class="drawer-head">
+    <h2>Log something</h2>
+    <button type="button" class="icon-btn" data-drawer-close aria-label="Close">{% icon "close" 20 %}</button>
+  </div>
+  {% include "quicklog/_panel.html" with form=None kind="" spec=None panel_id="drawer" %}
+</dialog>

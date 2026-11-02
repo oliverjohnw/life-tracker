@@ -1,0 +1,11 @@
+<div class="act-row" data-act-row>
+  <div class="frow" style="--n: 2">
+    <div class="fld"><label>Act</label>{{ f.artist }}{% for e in f.artist.errors %}<em class="err">{{ e }}</em>{% endfor %}</div>
+    <div class="fld"><label>Role</label>{{ f.role }}</div>
+  </div>
+  <div class="frow" style="--n: 2">
+    <div class="fld"><label>Genre</label>{{ f.genre }}</div>
+    <div class="fld"><label>Rating</label>{{ f.rating }}{% for e in f.rating.errors %}<em class="err">{{ e }}</em>{% endfor %}</div>
+  </div>
+  <button type="button" class="link-btn" data-remove-act>Remove this act</button>
+</div>

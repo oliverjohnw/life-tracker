@@ -1,0 +1,18 @@
+<div class="log-panel" data-log-panel{% if spec %} style="--accent: {{ spec.color }}; --accent-rgb: {{ spec.rgb }};"{% endif %}>
+  <div class="log-picker">
+    <label for="log-kind-{{ panel_id|default:'x' }}">What are you logging?</label>
+    <select id="log-kind-{{ panel_id|default:'x' }}" class="select big" data-log-kind data-base="{% url 'quicklog:index' %}">
+      <option value="">Choose…</option>
+      {% for t in log_types %}
+      <option value="{{ t.slug }}" data-color="{{ t.color }}" data-rgb="{{ t.rgb }}"{% if t.slug == kind %} selected{% endif %}>{{ t.label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="log-body" data-log-body>
+    {% if form %}
+      {% include "quicklog/_form.html" %}
+    {% else %}
+      <div class="log-hint">Pick something above and the right fields show up here.<br>You can always add the extras later from the admin.</div>
+    {% endif %}
+  </div>
+</div>

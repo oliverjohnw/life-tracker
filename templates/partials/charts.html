@@ -1,0 +1,13 @@
+<div class="chart-grid">
+  {% for c in charts %}
+  <div class="chart-card{% if c.wide %} wide{% endif %}">
+    <h3>{{ c.title }}</h3>
+    {% if c.subtitle %}<div class="sub">{{ c.subtitle }}</div>{% endif %}
+    {% if c.empty %}
+      <div class="chart-empty">{{ c.empty }}</div>
+    {% else %}
+      {{ c.html|safe }}
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>

@@ -1,0 +1,14 @@
+<div class="frow" style="--n: {{ row|length }}">
+  {% for cell in row %}{% with bf=cell.bf %}
+  <div class="fld{% if bf.errors %} has-error{% endif %}" {{ cell.attrs }}>
+    {% if bf.field.widget.input_type == "checkbox" %}
+      <label class="check-label">{{ bf }}<span>{{ bf.label }}</span></label>
+    {% else %}
+      <label for="{{ bf.id_for_label }}">{{ bf.label }}{% if bf.field.required %}<i>*</i>{% endif %}</label>
+      {{ bf }}
+    {% endif %}
+    {% if bf.help_text %}<small>{{ bf.help_text }}</small>{% endif %}
+    {% for e in bf.errors %}<em class="err">{{ e }}</em>{% endfor %}
+  </div>
+  {% endwith %}{% endfor %}
+</div>

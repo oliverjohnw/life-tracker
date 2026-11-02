@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}{{ current_category.label }} — Life Dashboard{% endblock %}
+
+{% block content %}
+<header class="page-head">
+  <div class="page-badge">{% icon current_category.icon 28 %}</div>
+  <div>
+    <h1>{% block heading %}{{ current_category.label }}{% endblock %}</h1>
+    <p>{% block subtitle %}{{ current_category.tagline }}{% endblock %}</p>
+  </div>
+  <div class="actions">
+    {% block actions %}
+    {% if add_url and has_data %}<a class="btn" href="{{ add_url }}">{% icon "plus" 16 %} {{ add_label|default:"Log new" }}</a>{% endif %}
+    {% endblock %}
+  </div>
+</header>
+
+{% block above_tabs %}{% endblock %}
+
+{% if has_data %}
+  {% include "partials/tiles.html" %}
+
+  <div data-tabs>
+    <div class="tabbar">
+      <div class="seg" role="tablist">
+        {% for key, label, ic in tabs %}
+        <button type="button" data-tab="{{ key }}" role="tab">{% icon ic 17 %} {{ label }}</button>
+        {% endfor %}
+      </div>
+      {% block tabbar_extra %}{% endblock %}
+    </div>
+
+    <section data-panel="log">{% block panel_log %}{% endblock %}</section>
+    <section data-panel="insights" hidden>
+      {% block panel_insights %}{% include "partials/charts.html" %}{% endblock %}
+    </section>
+    {% block panels_extra %}{% endblock %}
+  </div>
+{% else %}
+  {% block empty %}
+  <div class="empty">
+    {% icon current_category.icon 38 %}
+    <h3>{{ empty_title|default:"Nothing here yet" }}</h3>
+    <p>{{ empty_text|default:"Log your first entry and this page fills itself in." }}</p>
+    {% if add_url %}<a class="btn" href="{{ add_url }}">{% icon "plus" 16 %} {{ add_label|default:"Log the first one" }}</a>{% endif %}
+  </div>
+  {% endblock %}
+{% endif %}
+{% endblock %}

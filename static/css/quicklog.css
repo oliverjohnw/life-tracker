@@ -1,0 +1,101 @@
+/* ── quick log: button, drawer, forms ──────────────────────── */
+.log-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin: 0 0 18px; padding: 12px 14px;
+  border: 0; border-radius: 14px; cursor: pointer; font: inherit; font-weight: 700; font-size: 14.5px; color: #fff;
+  background: linear-gradient(100deg, #ff4f9a, #a58bff); box-shadow: 0 10px 28px rgba(165, 139, 255, 0.28);
+  transition: transform 0.12s, box-shadow 0.15s;
+}
+.log-btn:hover { transform: translateY(-1px); box-shadow: 0 14px 34px rgba(255, 79, 154, 0.38); }
+
+dialog.drawer {
+  position: fixed; inset: 0 0 0 auto; margin: 0; width: min(580px, 100vw); max-width: 100vw; height: 100dvh; max-height: 100dvh;
+  padding: 0; border: 0; border-left: 1px solid var(--line-strong); background: var(--surface-2); color: var(--ink);
+  box-shadow: -30px 0 90px rgba(0, 0, 0, 0.6); flex-direction: column;
+}
+dialog.drawer[open] { display: flex; animation: drawer-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1); }
+dialog.drawer::backdrop { background: rgba(5, 6, 10, 0.6); backdrop-filter: blur(3px); }
+@keyframes drawer-in { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px 14px; flex: none; }
+.drawer-head h2 { font-size: 22px; font-weight: 800; }
+.icon-btn { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; border: 1px solid var(--line-strong); background: none; color: var(--ink-2); cursor: pointer; }
+.icon-btn:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink); }
+
+.log-panel { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.log-page { max-width: 640px; }
+.log-page .log-panel { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.log-picker { padding: 6px 24px 18px; border-bottom: 1px solid var(--line); flex: none; }
+.log-page .log-picker { padding-top: 20px; }
+.log-picker label { display: block; font-size: 12px; font-weight: 650; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.select.big { width: 100%; height: 54px; font-size: 17px; font-weight: 650; padding: 0 14px; border-color: rgba(var(--accent-rgb), 0.55); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.1); }
+.log-body { overflow-y: auto; flex: 1; min-height: 0; transition: opacity 0.15s; }
+.log-body.is-loading { opacity: 0.4; }
+.log-hint { padding: 56px 32px; text-align: center; color: var(--muted); line-height: 1.7; }
+
+.qform { padding: 22px 24px 8px; }
+.frow { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+.fld { min-width: 0; }
+.fld > label { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.fld > label i { color: var(--accent); font-style: normal; margin-left: 3px; }
+.fld .input, .fld .select { width: 100%; height: 44px; }
+.fld .textarea { height: auto; padding: 11px 14px; line-height: 1.45; resize: vertical; }
+.fld input[type="file"] { width: 100%; font: inherit; font-size: 13.5px; color: var(--ink-2); }
+.fld input[type="file"]::file-selector-button { margin-right: 12px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--line-strong); background: rgba(255, 255, 255, 0.05); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+.fld small { display: block; color: var(--muted); font-size: 12px; margin-top: 5px; }
+.fld .err { display: block; color: var(--bad); font-size: 12.5px; font-style: normal; margin-top: 5px; }
+.fld.has-error .input, .fld.has-error .select, .fld.has-error .chips { border-color: var(--bad); }
+.fld[hidden] { display: none; }
+.check-label { display: inline-flex !important; align-items: center; gap: 10px; margin: 8px 0 0 !important; font-size: 14.5px !important; color: var(--ink) !important; cursor: pointer; }
+.check-label input { width: 20px; height: 20px; accent-color: var(--accent); }
+.form-errors { margin-bottom: 14px; padding: 10px 14px; border-radius: 12px; background: rgba(239, 91, 91, 0.12); border: 1px solid rgba(239, 91, 91, 0.35); color: #ffb3b3; font-size: 14px; }
+
+.more { margin: 6px 0 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255, 255, 255, 0.02); }
+.more > summary { list-style: none; cursor: pointer; padding: 13px 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.more > summary::-webkit-details-marker { display: none; }
+.more > summary::after { content: "+"; margin-left: auto; color: var(--accent); font-size: 20px; line-height: 1; }
+.more[open] > summary::after { content: "–"; }
+.more > summary small { color: var(--muted); font-weight: 500; }
+.more-body { padding: 4px 16px 6px; }
+
+.acts { margin: 4px 0 14px; padding: 14px 16px 6px; border: 1px dashed var(--line-strong); border-radius: 14px; }
+.acts-head { display: flex; align-items: center; justify-content: space-between; }
+.acts-head .sect-title { margin: 0; }
+.acts-hint { color: var(--muted); font-size: 12.5px; margin: 4px 0 10px; }
+.act-row { padding: 12px 0 2px; border-top: 1px solid var(--line); }
+.link-btn { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-weight: 600; font-size: 13.5px; cursor: pointer; }
+.link-btn:hover { text-decoration: underline; }
+.act-row .link-btn { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 5px 6px; min-height: 44px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); transition: border-color 0.15s, box-shadow 0.15s; }
+.chips:focus-within { border-color: rgba(var(--accent-rgb), 0.7); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15); }
+.chips-list { display: contents; }
+.chip-x { display: inline-flex; align-items: center; gap: 4px; padding: 3px 5px 3px 12px; border-radius: 999px; font-size: 13.5px; font-weight: 550; background: rgba(var(--accent-rgb), 0.16); border: 1px solid rgba(var(--accent-rgb), 0.38); }
+.chip-x button { width: 20px; height: 20px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.1); color: var(--ink); cursor: pointer; line-height: 1; font-size: 14px; }
+.chip-x button:hover { background: rgba(255, 255, 255, 0.22); }
+.chips .chips-input { flex: 1; min-width: 150px; height: 32px; border: 0; background: transparent; color: var(--ink); font: inherit; padding: 0 6px; outline: none; }
+
+.form-foot { position: sticky; bottom: 0; margin: 0 -24px; padding: 16px 24px 20px; background: linear-gradient(180deg, transparent, var(--surface-2) 38%); }
+.log-page .form-foot { background: linear-gradient(180deg, transparent, var(--surface) 38%); }
+.form-foot .btn { width: 100%; justify-content: center; height: 50px; font-size: 16px; }
+.btn[disabled] { opacity: 0.6; cursor: progress; transform: none; box-shadow: none; }
+
+.log-success { text-align: center; padding: 56px 28px; }
+.log-check { width: 64px; height: 64px; margin: 0 auto 16px; display: grid; place-items: center; border-radius: 50%; color: #0a0c11; background: var(--accent); box-shadow: 0 0 44px rgba(var(--accent-rgb), 0.5); }
+.log-success h3 { font-size: 26px; margin-bottom: 6px; }
+.log-success p { color: var(--ink-2); margin: 0 auto 24px; max-width: 360px; }
+.log-success-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.log-page > .log-success { margin-bottom: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 32px 24px; }
+
+.entry-actions { grid-column: 1 / -1; display: flex; gap: 8px; padding-top: 4px; }
+
+@media (max-width: 900px) {
+  .log-btn { width: auto; margin: 0 6px 0 0; padding: 9px 14px; white-space: nowrap; flex: none; }
+  .log-btn span { display: none; }
+  dialog.drawer { width: 100vw; border-left: 0; }
+}
+@media (max-width: 460px) {
+  .frow[style*="--n: 3"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .qform { padding: 18px 16px 8px; }
+  .log-picker { padding: 4px 16px 14px; }
+  .drawer-head { padding: 16px 16px 12px; }
+  .form-foot { margin: 0 -16px; padding: 14px 16px 18px; }
+}

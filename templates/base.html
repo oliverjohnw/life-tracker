@@ -1,0 +1,57 @@
+{% load static ui %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Life Dashboard{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% asset 'css/style.css' %}">
+  <link rel="stylesheet" href="{% asset 'css/quicklog.css' %}">
+  {% if has_charts %}<script src="{{ plotly_js_url }}" charset="utf-8"></script>{% endif %}
+  {% block extra_head %}{% endblock %}
+</head>
+<body style="--accent: {{ current_category.color|default:'#8b7cff' }}; --accent-rgb: {{ current_category.rgb|default:'139, 124, 255' }};">
+{% if user.is_authenticated %}
+<div class="shell">
+  <aside class="sidebar">
+    <a class="brand" href="{% url 'home' %}">
+      <span class="brand-mark">
+        {% for c in categories %}<i style="--c: {{ c.color }}"></i>{% endfor %}
+      </span>
+      <span class="brand-name">Life<br>Dashboard</span>
+    </a>
+    <button type="button" class="log-btn" data-log-open>{% icon "plus" 18 %}<span>Log something</span></button>
+    <nav class="nav">
+      <a class="nav-item {% if request.resolver_match.url_name == 'home' %}is-active{% endif %}" href="{% url 'home' %}">
+        {% icon "home" 20 %} Home
+      </a>
+      <div class="nav-sep"></div>
+      {% for c in categories %}
+      <a class="nav-item {% if current_category.slug == c.slug %}is-active{% endif %}" href="{% url c.url_name %}" style="--c: {{ c.color }}; --c-rgb: {{ c.rgb }}">
+        {% icon c.icon 20 %} {{ c.label }}
+      </a>
+      {% endfor %}
+    </nav>
+    <div class="sidebar-foot">
+      <a class="nav-item" href="/admin/">{% icon "sliders" 18 %} Admin</a>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button class="nav-item" type="submit">{% icon "logout" 18 %} Log out</button>
+      </form>
+      <div class="who">Signed in as {{ user.get_username }}</div>
+    </div>
+  </aside>
+  <main class="main">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% if not hide_drawer %}{% include "quicklog/_drawer.html" %}{% endif %}
+{% else %}
+{% block anon %}{% endblock %}
+{% endif %}
+<script src="{% asset 'js/app.js' %}" defer></script>
+<script src="{% asset 'js/quicklog.js' %}" defer></script>
+</body>
+</html>

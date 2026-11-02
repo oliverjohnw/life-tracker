@@ -1,0 +1,25 @@
+{% load ui %}{# expects: placeholder, years (optional), filter_label/filter_key/filter_options (optional), total #}
+<div class="toolbar">
+  <label class="field">
+    {% icon "search" 16 %}
+    <input class="input" type="search" data-filter="search" placeholder="{{ placeholder|default:'Search…' }}" autocomplete="off">
+  </label>
+  {% if years %}
+  <select class="select" data-filter="year" aria-label="Year">
+    <option value="">All years</option>
+    {% for y in years %}<option value="{{ y }}">{{ y }}</option>{% endfor %}
+  </select>
+  {% endif %}
+  {% if filter_options %}
+  <select class="select" data-filter="{{ filter_key }}" aria-label="{{ filter_label }}">
+    <option value="">{{ filter_label }}</option>
+    {% for value, label in filter_options %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+  </select>
+  {% endif %}
+  <select class="select" data-sort aria-label="Sort">
+    <option value="newest">Newest first</option>
+    <option value="oldest">Oldest first</option>
+    <option value="rating">Top rated</option>
+  </select>
+  <span class="result-count"><b data-count>{{ total }}</b> of {{ total }}</span>
+</div>
