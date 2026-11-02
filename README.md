@@ -86,15 +86,24 @@ and movies/sports tabs may have extra columns (a `Genre` column on movies, a
 
 ## Deploying to Railway
 
-1. Create a Railway project from this repo and add a **Postgres** plugin
-   (`DATABASE_URL` is set automatically).
-2. Set `SECRET_KEY` (any long random string). Leave `DEBUG` unset.
-3. **Uploaded images** (concert posters, book covers) need a persistent disk,
-   because Railway's container filesystem is wiped on every deploy: add a
-   **Volume** mounted at `/data` and set `MEDIA_ROOT=/data/media`. Images are served
-   through Django behind the login, so they stay private.
-4. Deploy. `railway.json` runs `collectstatic` at build, `migrate` before each deploy, and gunicorn to serve.
-5. Create your production login: `railway run python manage.py createsuperuser`
+1. **New Project → Deploy from GitHub repo** → pick this repo.
+2. In the project, **+ New → Database → PostgreSQL**.
+3. On the web service → **Variables**, add:
+
+   | Variable | Value |
+   |---|---|
+   | `SECRET_KEY` | `${{ secret(64) }}` — Railway generates a random value; the app refuses to boot without one |
+   | `DATABASE_URL` | `${{ Postgres.DATABASE_URL }}` (use your database service's name if it isn't "Postgres") |
+   | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | your login — created on first deploy by `ensure_admin`, which never overwrites an existing user. Delete `ADMIN_PASSWORD` afterwards if you like. |
+   | `MEDIA_ROOT` | `/data/media` (after step 4) |
+
+4. **Uploaded images** (concert posters, book covers) need a persistent disk, because the
+   container filesystem is wiped on every deploy: service → **Volumes** → add one mounted
+   at `/data`. Images are served by Django behind the login, so they stay private.
+5. Service → **Settings → Networking → Generate Domain**. The app trusts that domain
+   automatically (`RAILWAY_PUBLIC_DOMAIN`); redeploy once after generating it.
+6. `railway.json` does the rest: `collectstatic` at build, then `migrate` + `ensure_admin`
+   before each deploy, then gunicorn.
 
 ## Extending
 
