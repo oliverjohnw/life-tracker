@@ -102,8 +102,9 @@ and movies/sports tabs may have extra columns (a `Genre` column on movies, a
    at `/data`. Images are served by Django behind the login, so they stay private.
 5. Service → **Settings → Networking → Generate Domain**. The app trusts that domain
    automatically (`RAILWAY_PUBLIC_DOMAIN`); redeploy once after generating it.
-6. `railway.json` does the rest: `collectstatic` at build, then `migrate` + `ensure_admin`
-   before each deploy, then gunicorn.
+6. `railway.json` does the rest: `migrate` + `ensure_admin` before each deploy, then
+   `collectstatic` and gunicorn at start (static files are collected at boot so they're
+   guaranteed to exist in the running container).
 
 ## Extending
 
